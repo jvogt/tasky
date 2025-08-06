@@ -60,7 +60,7 @@ jobs:
 
       - name: Replace image tag in manifest
         run: |
-          sed "s|__REPLACEME_TAG__|${{ github.sha }}|g" k8s/deployment.yaml > k8s/deployment-patched.yaml
+          sed "s|__REPLACEME_TAG__|${{ github.sha }}|g" .k8s/deployment.yaml > .k8s/deployment-patched.yaml
 
       - name: Deploy to Kubernetes
-        run: kubectl apply -n tasky -f k8s/deployment-patched.yaml
+        run: kubectl apply -n tasky -f .k8s/deployment-patched.yaml
