@@ -10,6 +10,7 @@ on:
     branches: ['main']
 
 env:
+  IMAGE_TAG: jdvogt/tasky:${{ github.sha }}
   LATEST_TAG: jdvogt/tasky:latest
 
 jobs:
@@ -33,4 +34,33 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.LATEST_TAG }}
+          tags:  |
+            ${{ env.IMAGE_TAG }}
+            ${{ env.LATEST_TAG }}
+
+deploy:
+    runs-on: ubuntu-latest
+    needs: docker
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::129779193519:role/github-actions-eks-deployer
+          aws-region: us-west-2
+
+      - name: Set up kubeconfig for EKS
+        run: aws eks update-kubeconfig --name wiz-te --region us-west-2
+
+      - name: Replace image tag in manifest
+        run: |
+          sed "s|__REPLACEME_TAG__|${{ github.sha }}|g" k8s/deployment.yaml > k8s/deployment-patched.yaml
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -n tasky -f k8s/deployment-patched.yaml
