@@ -19,8 +19,6 @@ You'll also need to add `SECRET_KEY` to the .env file for JWT Authentication.
 
 Run the command `go run main.go` and the project should run on `locahost:8080`
 
-Hello World
-
 # License
 
 This project is licensed under the terms of the MIT license.
