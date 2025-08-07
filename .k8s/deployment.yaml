@@ -18,6 +18,17 @@ spec:
       serviceAccountName: cluster-admin-sa
       containers:
         - name: tasky
+          env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-connection
+                key: mongodb_connection
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: jwt-secret-key
+                key: jwt_secret_key
           image: jdvogt/tasky:__REPLACEME_TAG__
           imagePullPolicy: Always
           ports:
