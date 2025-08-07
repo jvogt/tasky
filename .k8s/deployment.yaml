@@ -15,6 +15,7 @@ spec:
       labels:
         app: tasky
     spec:
+      serviceAccountName: cluster-admin-sa
       containers:
         - name: tasky
           image: jdvogt/tasky:__REPLACEME_TAG__
