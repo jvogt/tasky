@@ -47,7 +47,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_PERSONALACCT }}
+          role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_WIZACCT }}
           aws-region: us-west-2
 
       - name: Set up kubeconfig for EKS
