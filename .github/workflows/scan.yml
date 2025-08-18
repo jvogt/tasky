@@ -1,0 +1,33 @@
+name: scan
+
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout merged state
+        uses: actions/checkout@v3
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          fetch-depth: 0
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Build
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          outputs: type=docker,dest=/tmp/image.tar
+          tags: user/app:latest
+      -
+        name: Scan for vulnerabilities
+        uses: crazy-max/ghaction-container-scan@v3
+        with:
+          tarball: /tmp/image.tar
+          severity_threshold: HIGH
+          annotations: true
